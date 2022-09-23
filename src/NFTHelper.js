@@ -41,7 +41,11 @@ class NFTHelper{
       const self = this;   
       this.readTextFile(urlFNL, this.json, function(text, hash){
         
-        window.settings = JSON.parse(text);
+        const stngs  = JSON.parse(text);
+        for (const property in stngs) {
+          const val = stngs[property];
+          window.settings[property] = val;
+        }
         window.app.initShader();  
         window.app.randomizeView();
         console.log(window.settings["hdri"]);

@@ -1,14 +1,12 @@
 import * as THREE from './build/three.module.js';
 import { GUI } from './examples/jsm/libs/lil-gui.module.min.js';
 import { NFTHelper } from './NFTHelper.js';
-
-window.external = false;
-window.settings;
 window.app;
-let col = new THREE.Vector3(1,1,1);
+window.external = false;
 let currHDRIIndex = 5;
-window.currShape = 0;
-let nft = new NFTHelper();
+let rHue = Math.random();
+window.color1 = new THREE.Color().setHSL(rHue, Math.random(), Math.random());
+window.color2 = new THREE.Color().setHSL((rHue + (.5 + (-.15+Math.random()*.3)))%1.0 , Math.random(),Math.random());
 
 window.hdriItems =
 [
@@ -26,21 +24,6 @@ window.hdriItems =
   {envMapValue:1.0,  folder:"mountains", format:"png", name:"mountains"},
 ];
 
-
-
-
-let rHue = Math.random();
-// let rSat = Math.random();
-// let rBrt = Math.random();
-
-window.color1 = new THREE.Color().setHSL(rHue, Math.random(), Math.random());
-window.color2 = new THREE.Color().setHSL((rHue + (.5 + (-.15+Math.random()*.3)))%1.0 , Math.random(),Math.random());
-
-const exportHelper = function(){
-  //download(content, fileName, contentType) { 
-  nft.prepareJSON();
-}
-const randomizeHelper = function(){ window.randomize() }
 
 window.getSettings = function(){
   return{
@@ -73,6 +56,23 @@ window.getSettings = function(){
 } 
 
 window.settings = window.getSettings();
+let col = new THREE.Vector3(1,1,1);
+window.currShape = 0;
+let nft = new NFTHelper();
+
+
+
+
+// let rSat = Math.random();
+// let rBrt = Math.random();
+
+
+const exportHelper = function(){
+  //download(content, fileName, contentType) { 
+  nft.prepareJSON();
+}
+const randomizeHelper = function(){ window.randomize() }
+
 
 
 const buttons = {
@@ -206,96 +206,96 @@ window.initGUI = function(){
   for(let i = 0; i<window.hdriItems.length; i++){
     hdris["" + i + ""] = window.hdriItems[i].name;
   }
-  panel.add( settings, "hdri", hdris ).listen().onChange( function ( toggle ) {
+  panel.add( window.settings, "hdri", hdris ).listen().onChange( function ( toggle ) {
     hdriButtonPress();
   });
 
-  panel.add( settings, "environment map intensity", 0, 10, .001 ).listen().onChange( function ( val ) {
+  panel.add( window.settings, "environment map intensity", 0, 10, .001 ).listen().onChange( function ( val ) {
     window.app.bufferImage.uniforms['envMapMult'].value = val;
   }).listen();
 
-  panel.add( settings, "hue", 0, Math.PI*2, .001 ).listen().onChange( function ( val ) {
+  panel.add( window.settings, "hue", 0, Math.PI*2, .001 ).listen().onChange( function ( val ) {
     window.app.bufferImage.uniforms['hue'].value = val;
   }).listen();
-  panel.add( settings, "saturation", -2, 2, .001 ).listen().onChange( function ( val ) {
+  panel.add( window.settings, "saturation", -2, 2, .001 ).listen().onChange( function ( val ) {
     window.app.bufferImage.uniforms['saturation'].value = val;
   }).listen();
 
-  panel.add( settings, "outter size", 0, 20, .001 ).listen().onChange( function ( val ) {
+  panel.add( window.settings, "outter size", 0, 20, .001 ).listen().onChange( function ( val ) {
     window.app.bufferImage.uniforms['outtieSize'].value = val;
   }).listen();
-  panel.add( settings, "inner size", 0, 20, .001 ).listen().onChange( function ( val ) {
+  panel.add( window.settings, "inner size", 0, 20, .001 ).listen().onChange( function ( val ) {
     window.app.bufferImage.uniforms['innieSize'].value = val;
   }).listen();
-  panel.add( settings, "rotation speed inner", -20, 20, .001 ).listen().onChange( function ( val ) {
+  panel.add( window.settings, "rotation speed inner", -20, 20, .001 ).listen().onChange( function ( val ) {
     window.app.bufferImage.uniforms['rotSpeedInner'].value = val;
   }).listen();
-  panel.add( settings, "rotation speed outter", -20, 20, .001 ).listen().onChange( function ( val ) {
+  panel.add( window.settings, "rotation speed outter", -20, 20, .001 ).listen().onChange( function ( val ) {
     window.app.bufferImage.uniforms['rotSpeedOutter'].value = val;
   }).listen();
 
-  panel.add( settings, "reflections", 1, 25, 1 ).listen().onChange( function ( val ) {
+  panel.add( window.settings, "reflections", 1, 25, 1 ).listen().onChange( function ( val ) {
     window.app.bufferImage.uniforms['reflections'].value = Math.floor(val);
   }).listen();
-  panel.add( settings, "rim size", 0, 100, .01 ).listen().onChange( function ( val ) {
+  panel.add( window.settings, "rim size", 0, 100, .01 ).listen().onChange( function ( val ) {
     window.app.bufferImage.uniforms['rimSize'].value = val;
   }).listen();
 
   
-  panel.add( settings, "color r", 0, 2, .001 ).listen().onChange( function ( val ) {
+  panel.add( window.settings, "color r", 0, 2, .001 ).listen().onChange( function ( val ) {
     col.x=val;
     window.app.bufferImage.uniforms['colMult'].value = col;
   }).listen();
-  panel.add( settings, "color g", 0, 2, .001 ).listen().onChange( function ( val ) {
+  panel.add( window.settings, "color g", 0, 2, .001 ).listen().onChange( function ( val ) {
     col.y=val;
     window.app.bufferImage.uniforms['colMult'].value = col;
   }).listen();
-  panel.add( settings, "color b", 0, 2, .001 ).listen().onChange( function ( val ) {
+  panel.add( window.settings, "color b", 0, 2, .001 ).listen().onChange( function ( val ) {
     col.z=val;
     window.app.bufferImage.uniforms['colMult'].value = col;
   }).listen();
 
-  panel.add( settings, "normals multiply", -3, 3, .001 ).listen().onChange( function ( val ) {
+  panel.add( window.settings, "normals multiply", -3, 3, .001 ).listen().onChange( function ( val ) {
     window.app.bufferImage.uniforms['normalColorMult'].value = val;
   }).listen();
 
 
-  panel.add( settings, "reflection tweak 1", -2, 2, .001 ).listen().onChange( function ( val ) {
+  panel.add( window.settings, "reflection tweak 1", -2, 2, .001 ).listen().onChange( function ( val ) {
     window.app.bufferImage.uniforms['reflectionTweak1'].value = val;
   }).listen();
-  panel.add( settings, "reflection tweak 2", -2, 2, .001 ).listen().onChange( function ( val ) {
+  panel.add( window.settings, "reflection tweak 2", -2, 2, .001 ).listen().onChange( function ( val ) {
     window.app.bufferImage.uniforms['reflectionTweak2'].value = val;
   }).listen();
-  panel.add( settings, "reflection tweak 3", -2, 2, .001 ).listen().onChange( function ( val ) {
+  panel.add( window.settings, "reflection tweak 3", -2, 2, .001 ).listen().onChange( function ( val ) {
     window.app.bufferImage.uniforms['reflectionTweak3'].value = val;
   }).listen();
-  panel.add( settings, "reflection tweak 4", -2, 2, .001 ).listen().onChange( function ( val ) {
+  panel.add( window.settings, "reflection tweak 4", -2, 2, .001 ).listen().onChange( function ( val ) {
     window.app.bufferImage.uniforms['reflectionTweak4'].value = val;
   }).listen();
  
-  panel.add( settings, "test 1", -4, 4, .001 ).listen().onChange( function ( val ) {
+  panel.add( window.settings, "test 1", -4, 4, .001 ).listen().onChange( function ( val ) {
     window.app.bufferImage.uniforms['test1'].value = val;
   }).listen();
-  panel.add( settings, "test 2", -2, 2, .001 ).listen().onChange( function ( val ) {
+  panel.add( window.settings, "test 2", -2, 2, .001 ).listen().onChange( function ( val ) {
     window.app.bufferImage.uniforms['test2'].value = val;
   }).listen();
-  panel.add( settings, "test 3", -10, 10, .001 ).listen().onChange( function ( val ) {
+  panel.add( window.settings, "test 3", -10, 10, .001 ).listen().onChange( function ( val ) {
     window.app.bufferImage.uniforms['test3'].value = val;
   }).listen();
-  panel.add( settings, "test 4", -10, 10, .001 ).listen().onChange( function ( val ) {
+  panel.add( window.settings, "test 4", -10, 10, .001 ).listen().onChange( function ( val ) {
     window.app.bufferImage.uniforms['test4'].value = val;
   }).listen();
-  panel.add( settings, "shape", 0, 4, 1 ).listen().onChange( function ( val ) {
+  panel.add( window.settings, "shape", 0, 4, 1 ).listen().onChange( function ( val ) {
     window.currShape = Math.floor(val);
     window.app.initShader()
   }).listen();
 
-  panel.addColor( settings, "color1").onChange( function ( val ) {
+  panel.addColor( window.settings, "color1").onChange( function ( val ) {
     //window.color1.setStyle(val);
     //app.bufferImage.uniforms['c1'].value = new THREE.Vector4(window.color1.r, window.color1.g, window.color1.b, 1.);
     updateBackground();
   }).listen();
-  panel.addColor( settings, "color2").onChange( function ( val ) {
+  panel.addColor( window.settings, "color2").onChange( function ( val ) {
     //window.color2.setStyle(val);
     //app.bufferImage.uniforms['c2'].value = new THREE.Vector4(window.color2.r, window.color2.g, window.color2.b, 1.);
     updateBackground();
