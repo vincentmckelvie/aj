@@ -102,7 +102,6 @@ window.randomize = function(){
   window.settings["saturation"] = r;
   window.app.bufferImage.uniforms['saturation'].value = r;
   
-
   r = 10;// + Math.random()* 10;
   window.settings["outter size"] = r;
   window.app.bufferImage.uniforms['outtieSize'].value = r;
@@ -174,7 +173,7 @@ window.randomize = function(){
 
   window.settings['color1'] = "#"+window.color1.getHexString();
   window.settings['color2'] = "#"+window.color2.getHexString();
-  updateBackground();
+  window.updateBackground();
   
 }
 
@@ -301,6 +300,7 @@ window.initGUI = function(){
     //app.bufferImage.uniforms['c2'].value = new THREE.Vector4(window.color2.r, window.color2.g, window.color2.b, 1.);
     updateBackground();
   }).listen();
+
   panel.add(buttons,'export json');
   panel.add(buttons,'randomize');
   
@@ -795,7 +795,7 @@ class App {
   
   constructor() {
     
-    updateBackground();
+    window.updateBackground();
    
     const self = this;
     this.buffer = new Buffer();
@@ -865,7 +865,7 @@ class App {
   }
   handleScroll(e){
     if(this.canControl){
-      this.mouse.zoomTarg -= e.deltaY*.004;
+      this.mouse.zoomTarg -= e.deltaY*.008;
       if(this.mouse.zoomTarg>-.1)this.mouse.zoomTarg = -.1;
       if(this.mouse.zoomTarg<-35)this.mouse.zoomTarg = -35;
     }
@@ -904,7 +904,6 @@ class App {
       
     }
 
-    
     this.renderer.domElement.addEventListener("mousemove",function(e){
       self.handleMouseMove(e);
     })
