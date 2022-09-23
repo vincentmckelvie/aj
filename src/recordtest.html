@@ -1,0 +1,109 @@
+<html>
+<head></head>
+<body>
+<div id="button" style="
+  position: fixed; 
+  left:50%; 
+  top:50%;
+  background:white; 
+  color:black; 
+  border:thin solid black; 
+  width:90px; 
+  padding-top:10px;
+  padding-bottom:10px;
+  margin-left:-45px;
+  margin-top:-10px;
+  text-align: center;
+  ">start</div>
+<canvas id="canv"></canvas>
+<script type="module">
+
+import {GlobalSoundHandler} from "./GlobalSoundHandler.js";
+
+let s = new GlobalSoundHandler();
+let canvas, ctx, stream, mediaRecorder;
+const recordedChunks = []; 
+window.aStream;
+
+
+document.getElementById("button").addEventListener("click", function(){
+  document.getElementById("button").style.display = "none";
+  s.init();
+})
+
+window.init = function(){
+
+  canvas = document.getElementById('canv');
+  canvas.width = canvas.height = 500;
+  ctx = canvas.getContext("2d");
+  ctx.fillStyle = "#f00";
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  const vStream = canvas.captureStream(30);
+  stream = new MediaStream([vStream.getTracks()[0], window.aStream.getTracks()[0]]);
+  mediaRecorder = new MediaRecorder( stream );
+  mediaRecorder.ondataavailable = handleDataAvailable;
+
+  
+
+
+  mediaRecorder.start();
+
+  setTimeout(function(){
+    ctx.fillStyle="white";
+    ctx.fillRect(Math.random()*canvas.width, Math.random()*canvas.height, 50,50);
+    s.playSoundByName({name:"audio-0"})
+  }, 1000);
+  setTimeout(function(){
+    ctx.fillStyle="yellow";
+    ctx.fillRect(Math.random()*canvas.width, Math.random()*canvas.height, 50,50);
+    s.playSoundByName({name:"audio-1"})
+  }, 2000);
+  setTimeout(function(){
+    ctx.fillStyle="green";
+    ctx.fillRect(Math.random()*canvas.width, Math.random()*canvas.height, 50,50);
+    s.playSoundByName({name:"audio-2"})
+  }, 3000);
+  setTimeout(function(){
+    ctx.fillStyle="blue";
+    ctx.fillRect(Math.random()*canvas.width, Math.random()*canvas.height, 50,50);
+    s.playSoundByName({name:"audio-3"})
+  }, 4000);
+
+  setTimeout((event) => {
+    console.log("stopping");
+    mediaRecorder.stop();
+  }, 6000);
+
+
+}
+
+function download() {
+  const blob = new Blob(recordedChunks, {
+    type: "video/mp4"
+  });
+  console.log("download")
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  document.body.appendChild(a);
+  a.style = "display: none";
+  a.href = url;
+  a.download = "test.mp4";
+  a.click();
+  window.URL.revokeObjectURL(url);
+}
+
+function handleDataAvailable(event) {
+  console.log("data-available");
+  if (event.data.size > 0) {
+    recordedChunks.push(event.data);
+    console.log(recordedChunks);
+    download();
+  }// else {
+  //   // …
+  // }
+}
+
+</script>
+</body>
+</html>
