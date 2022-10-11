@@ -42,10 +42,23 @@ class NFTHelper{
       this.readTextFile(urlFNL, this.json, function(text, hash){
         
         const stngs  = JSON.parse(text);
-        for (const property in stngs) {
-          const val = stngs[property];
-          window.settings[property] = val;
+        console.log(stngs)
+        // for (const property in stngs["attribute"]) {
+        //   const val = stngs[property];
+        //   console.log(val)
+        //   window.settings[property] = val;
+        // }
+        console
+        for(let i = 0; i < stngs["attributes"].length; i++){
+          const prop = stngs["attributes"][i]["trait_type"];
+          const val = stngs["attributes"][i]["value"];
+          
+          //console.log(prop);
+          window.settings[prop] = val;
+
         }
+        console.log(window.settings)
+
         window.app.initShader();  
         window.app.randomizeView();
         console.log(window.settings["hdri"]);
@@ -130,30 +143,33 @@ class NFTHelper{
 
     
     prepareJSON(){
-        const jsonData = JSON.stringify(window.settings);
-        this.download(jsonData, 'json.json', 'text/plain');
+      const arr = [];
+      for (const property in window.settings) {
+        arr.push({"trait_type" : property, "value" : window.settings[property] })
+      }
+      const params = {"name":"Anthony James Platonic Solids", "description":"A collection of platonic solids.", "image":"PLACEHOLDER.gif", "attributes":arr};
+      const jsonData = JSON.stringify(params);
+      this.download(jsonData, 'json.json', 'text/plain');
     }
 
-      
-
     download(content, fileName, contentType) {
-        var a = document.createElement("a");
-        var file = new Blob([content], {type: contentType});
-        a.href = URL.createObjectURL(file);
-        a.download = fileName;
-        a.click();
+      var a = document.createElement("a");
+      var file = new Blob([content], {type: contentType});
+      a.href = URL.createObjectURL(file);
+      a.download = fileName;
+      a.click();
     }
     
     readTextFile(file, hash, callback) {
-        const rawFile = new XMLHttpRequest();
-        rawFile.overrideMimeType("application/json");
-        rawFile.open("GET", file, true);
-        rawFile.onreadystatechange = function() {
-            if (rawFile.readyState === 4 && rawFile.status == "200") {
-                callback(rawFile.responseText, hash);
-            }
-        }
-        rawFile.send(null);
+      const rawFile = new XMLHttpRequest();
+      rawFile.overrideMimeType("application/json");
+      rawFile.open("GET", file, true);
+      rawFile.onreadystatechange = function() {
+          if (rawFile.readyState === 4 && rawFile.status == "200") {
+              callback(rawFile.responseText, hash);
+          }
+      }
+      rawFile.send(null);
     }
 }
 
